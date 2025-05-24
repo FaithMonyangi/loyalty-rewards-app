@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Phone, User, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Database } from '@/utils/database';
-import { useToast } = from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface NewVisitEnhancedProps {
   onNavigate: (screen: string) => void;
