@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Users, Calendar, Gift, TrendingUp, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ export const Analytics = ({ onNavigate }: AnalyticsProps) => {
 
   useEffect(() => {
     const customers = Database.getCustomers();
-    const visits = Database.getAllVisits();
+    const visits = Database.getVisits();
     
     // Overview stats
     const totalCustomers = customers.length;
