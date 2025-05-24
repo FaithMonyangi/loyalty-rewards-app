@@ -1,16 +1,21 @@
 
 import { useState } from 'react';
 import { Dashboard } from '@/components/Dashboard';
-import { NewVisit } from '@/components/NewVisit';
+import { NewVisitEnhanced } from '@/components/NewVisitEnhanced';
 import { CustomerList } from '@/components/CustomerList';
+import { CustomerProfile } from '@/components/CustomerProfile';
 import { RewardsTracker } from '@/components/RewardsTracker';
 import { Settings } from '@/components/Settings';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState('dashboard');
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
 
-  const handleNavigate = (screen: string) => {
+  const handleNavigate = (screen: string, customerId?: string) => {
     setCurrentScreen(screen);
+    if (customerId) {
+      setSelectedCustomerId(customerId);
+    }
   };
 
   const renderScreen = () => {
@@ -18,9 +23,11 @@ const Index = () => {
       case 'dashboard':
         return <Dashboard onNavigate={handleNavigate} />;
       case 'newVisit':
-        return <NewVisit onNavigate={handleNavigate} />;
+        return <NewVisitEnhanced onNavigate={handleNavigate} />;
       case 'customerList':
         return <CustomerList onNavigate={handleNavigate} />;
+      case 'customerProfile':
+        return <CustomerProfile onNavigate={handleNavigate} customerId={selectedCustomerId} />;
       case 'rewardsTracker':
         return <RewardsTracker onNavigate={handleNavigate} />;
       case 'settings':
