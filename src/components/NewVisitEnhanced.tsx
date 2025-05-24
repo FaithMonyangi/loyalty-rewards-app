@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Phone, User, Search, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -375,7 +374,7 @@ export const NewVisitEnhanced = ({ onNavigate }: NewVisitEnhancedProps) => {
                 <Button
                   onClick={handleCreateCustomer}
                   disabled={!customerName}
-                  className="w-full h-12 gradient-gold text-white font-bold text-lg rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
+                  className="w-full h-12 gradient-primary text-white font-bold text-lg rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50"
                 >
                   <Sparkles className="h-5 w-5 mr-2" />
                   🚀 Start Loyalty Tracking
