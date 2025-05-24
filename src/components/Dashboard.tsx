@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Users, Gift, TrendingUp, Plus } from 'lucide-react';
+import { Users, Gift, TrendingUp, Plus, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Database } from '@/utils/database';
