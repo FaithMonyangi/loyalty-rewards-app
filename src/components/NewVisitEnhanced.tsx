@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Phone, User, Search, Sparkles } from 'lucide-react';
+import { ArrowLeft, Phone, User, Search, Sparkles, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Database } from '@/utils/database';
+import { WhatsAppService } from '@/utils/whatsapp';
 import { useToast } from '@/hooks/use-toast';
 
 interface NewVisitEnhancedProps {
@@ -16,6 +18,8 @@ export const NewVisitEnhanced = ({ onNavigate }: NewVisitEnhancedProps) => {
   const [existingCustomer, setExistingCustomer] = useState<any>(null);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [visitLogged, setVisitLogged] = useState(false);
+  const [lastLoggedCustomer, setLastLoggedCustomer] = useState<any>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -80,6 +84,8 @@ export const NewVisitEnhanced = ({ onNavigate }: NewVisitEnhancedProps) => {
       description: `${customerName} has been added with their first visit logged! ✨`,
     });
 
+    setLastLoggedCustomer(newCustomer);
+    setVisitLogged(true);
     setPhoneNumber('');
     setCustomerName('');
     setExistingCustomer(null);
@@ -121,10 +127,135 @@ export const NewVisitEnhanced = ({ onNavigate }: NewVisitEnhancedProps) => {
       description,
     });
 
+    setLastLoggedCustomer(updatedCustomer);
+    setVisitLogged(true);
     setPhoneNumber('');
     setCustomerName('');
     setExistingCustomer(null);
   };
+
+  const handleSendWhatsApp = () => {
+    if (!lastLoggedCustomer) return;
+    
+    try {
+      WhatsAppService.sendMessage(
+        lastLoggedCustomer.phone,
+        lastLoggedCustomer.name,
+        lastLoggedCustomer.visits
+      );
+      
+      toast({
+        title: "📱 WhatsApp Opened!",
+        description: "Message prepared and ready to send. Just click send in WhatsApp!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to open WhatsApp. Please check the phone number.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleStartNew = () => {
+    setVisitLogged(false);
+    setLastLoggedCustomer(null);
+  };
+
+  if (visitLogged && lastLoggedCustomer) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+        <div className="p-6 max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center mb-8">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onNavigate('dashboard')}
+              className="mr-4 hover:bg-white/50"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-brand-primary to-brand-accent rounded-lg">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold font-heading text-gradient">Visit Logged! 🎉</h1>
+            </div>
+          </div>
+
+          {/* Success Card */}
+          <Card className="hover-lift border-0 shadow-xl bg-white/70 backdrop-blur-sm mb-6">
+            <CardContent className="p-8 text-center">
+              <div className="mb-6">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="h-10 w-10 text-green-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  ✅ Visit Successfully Logged!
+                </h2>
+                <p className="text-gray-600">
+                  <strong>{lastLoggedCustomer.name}</strong> now has <strong>{lastLoggedCustomer.visits}</strong> visit{lastLoggedCustomer.visits !== 1 ? 's' : ''}
+                </p>
+              </div>
+
+              {/* Progress */}
+              <div className="mb-8">
+                <div className="flex justify-center items-center gap-2 mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <div
+                      key={star}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-lg ${
+                        star <= lastLoggedCustomer.visits
+                          ? 'bg-yellow-400 text-white'
+                          : 'bg-gray-200 text-gray-400'
+                      }`}
+                    >
+                      ⭐
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-600">
+                  {lastLoggedCustomer.visits >= 5 
+                    ? "🎁 FREE SERVICE UNLOCKED!" 
+                    : `${5 - lastLoggedCustomer.visits} more visit${5 - lastLoggedCustomer.visits !== 1 ? 's' : ''} to FREE service`
+                  }
+                </p>
+              </div>
+
+              {/* WhatsApp Button */}
+              <div className="space-y-4">
+                <Button
+                  onClick={handleSendWhatsApp}
+                  className="w-full h-14 bg-green-500 hover:bg-green-600 text-white font-bold text-lg rounded-xl transition-all duration-300 hover:scale-105"
+                >
+                  <MessageCircle className="h-6 w-6 mr-3" />
+                  📱 Send WhatsApp Message
+                </Button>
+                
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-sm text-green-800 font-medium mb-2">
+                    📋 Preview Message:
+                  </p>
+                  <p className="text-sm text-green-700 italic">
+                    "{WhatsAppService.generateMessage(lastLoggedCustomer.name, lastLoggedCustomer.visits)}"
+                  </p>
+                </div>
+
+                <Button
+                  onClick={handleStartNew}
+                  variant="outline"
+                  className="w-full h-12 border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold rounded-xl"
+                >
+                  Log Another Visit
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
