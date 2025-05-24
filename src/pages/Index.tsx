@@ -6,6 +6,7 @@ import { CustomerList } from '@/components/CustomerList';
 import { CustomerProfile } from '@/components/CustomerProfile';
 import { RewardsTracker } from '@/components/RewardsTracker';
 import { Settings } from '@/components/Settings';
+import { Analytics } from '@/components/Analytics';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState('dashboard');
@@ -30,6 +31,8 @@ const Index = () => {
         return <CustomerProfile onNavigate={handleNavigate} customerId={selectedCustomerId} />;
       case 'rewardsTracker':
         return <RewardsTracker onNavigate={handleNavigate} />;
+      case 'analytics':
+        return <Analytics onNavigate={handleNavigate} />;
       case 'settings':
         return <Settings onNavigate={handleNavigate} />;
       default:
